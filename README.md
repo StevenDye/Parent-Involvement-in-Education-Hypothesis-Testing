@@ -19,3 +19,4 @@ Summary of files:
  - data_prep.py
  - visualizations.py
  - hypothesis_tests.py
+ - Powerpoint file: https://docs.google.com/presentation/d/1kjb50hbVqYYjk_NzyRe7SakGgzYTrXKrpP3ShqCcZQc/edit#slide=id.g6b57130686_0_0
