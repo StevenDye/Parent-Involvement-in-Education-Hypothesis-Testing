@@ -1,37 +1,109 @@
-import math
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Nov 19 10:43:10 2019
+@author: Anil Onal & Steven Dye
+FIS Module 3 Project
+Data visualizations including descriptive stats
+Run this file after data_prep.py, which produces input data for this file
+"""
+import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
+from statsmodels.graphics.mosaicplot import mosaic
 import seaborn as sns
-
-df = pd.read_csv('~/FIS-Projects/Module-3/FIS-Mod3-Project/data/pfi_pu.csv')
-
-# Creates a sub-dataframe that removes N/A values
-valid_grades_df = df.copy()
-valid_grades_df = valid_grades_df[(valid_grades_df['SEGRADES'] != -1) & (valid_grades_df['SEGRADES'] != 5)]
-# Categoricalize students into two groups based on school performance
-valid_grades_df['student_performance'] = valid_grades_df['SEGRADES'].apply(lambda x: math.floor(x/2.5))
-
+import matplotlib.pyplot as plt
+df_pi = pd.read_csv('~/FIS-Projects/Module-3/FIS-Mod3-Project/data/pi_df.csv')
+# Recode SEGRADES to convert [1, 2, 3, 4] to ['A', 'B', 'C', 'D']
+i1 = df_pi.loc[df_pi.SEGRADES == 1].index
+i2 = df_pi.loc[df_pi.SEGRADES == 2].index
+i3 = df_pi.loc[df_pi.SEGRADES == 3].index
+i4 = df_pi.loc[df_pi.SEGRADES == 4].index
+df_pi.loc[i1, 'grades'] = 'A'
+df_pi.loc[i2, 'grades'] = 'B'
+df_pi.loc[i3, 'grades'] = 'C'
+df_pi.loc[i4, 'grades'] = 'D or lower'
+# As a part of descriptive stats, distribution of grades, the main student
+# performance feature
+y = df_pi.grades.value_counts()
+x = df_pi.grades.unique()
+fig = plt.figure(figsize = (4, 5))
+ax = sns.barplot(x, y, color = 'dodgerblue')
+ax.set_title('Distribution of Student Grades')
+ax.set_ylabel('Number of students')
+# The distribution of the first parental involvement indicator, FSFREQ. 
+fig = plt.figure(figsize = (6, 4))
+ax = sns.distplot(df_pi.FSFREQ, color = 'orange', kde = False, hist_kws = {'alpha': 1})
+ax.set_title('Distribution of Parental Involvement at School')
+ax.set_ylabel('Number of parents')
+ax.set_xlabel("Parent's participation hours at child's school")
 # Break the students into a high performing group and a low performing group
-low_students_pi = valid_grades_df[valid_grades_df['student_performance'] == 1]['FSFREQ']
-high_students_pi = valid_grades_df[valid_grades_df['student_performance'] == 0]['FSFREQ']
-
-#####################
-# Plots
-#####################
-
-# This plots the Parent's Participation Count
-sns.distplot(valid_grades_df['FSFREQ'], kde=False)
-plt.title("Parent's Participation Count")
-plt.xlabel("Parent's participation hours at child's school")
-plt.ylabel("Count")
-
-# This plots the Parent's Participation distribution based on the student's
-# performance in school
-sns.distplot(low_students_pi, kde=False, norm_hist=True, color="b",
-	            label="Low performing student", hist_kws=dict(alpha=0.3))
-sns.distplot(high_students_pi, kde=False, norm_hist=True, color="r",
-	            label="High performing student", hist_kws=dict(alpha=0.3))
+i1 = df_pi.loc[df_pi.SEGRADES <= 2].index
+i2 = df_pi.loc[df_pi.SEGRADES >= 3].index
+df_pi.loc[i1, 'grades_comp'] = 'A or B'
+df_pi.loc[i2, 'grades_comp'] = 'C or lower'
+# FSFREQ distributions for high and low performing students
+fig = plt.figure(figsize = (8, 4))
+ax1 = sns.distplot(df_pi.loc[df_pi.grades_comp == 'A or B'].FSFREQ, \
+                   color = 'orange', norm_hist = True, hist_kws = {'alpha': 0.8}, \
+                   kde = False, label = 'A or B')
+sns.distplot(df_pi.loc[df_pi.grades_comp == 'C or lower'].FSFREQ, ax = ax1, \
+             color = 'dodgerblue', norm_hist = True, hist_kws = {'alpha': 0.8}, \
+             kde = False, label = 'C or lower')
+ax1.set_title('Relationship Between Student Grades and \nDistribution of Parental Involvement at School')
+ax1.set_ylabel('Probability')
+ax1.set_xlabel("Parent's participation hours at child's school")
 plt.legend()
-plt.title("Hours of parental involevment per year distribution")
-plt.xlabel("Parent's participation hours at child's school")
-plt.ylabel("Probability")
+# Distributions of the composite at-school parental involvement indicator for
+# high and low performing students
+fig = plt.figure(figsize = (4, 4))
+ax1 = sns.distplot(df_pi.loc[df_pi.grades_comp == 'A or B'].pi_pro_schl_feats_comp, \
+                   color = 'orange', bins = 6, \
+                   norm_hist = True, hist_kws = {'alpha': 0.8}, kde = False, label = 'A or B')
+sns.distplot(df_pi.loc[df_pi.grades_comp == 'C or lower'].pi_pro_schl_feats_comp, \
+             ax = ax1, color = 'dodgerblue', bins = 6, norm_hist = True, \
+             kde = False, hist_kws = {'alpha': 0.8}, label = 'C or lower')
+ax1.set_title('Relationship Between Student Grades and \nDistribution of Parental Involvement at School')
+ax1.set_ylabel('Probability')
+ax1.set_xlabel("Composite index for parent's involvement at school\n(Higher values indicate more involvement)")
+plt.legend()
+# Distributions of the composite at-home parental involvement indicator for
+# high and low performing students
+fig = plt.figure(figsize = (4, 4))
+ax1 = sns.distplot(df_pi.loc[df_pi.grades_comp == 'A or B'].pi_pro_hm_feats_comp, \
+                   color = 'orange', bins = 13, \
+                   norm_hist = True, hist_kws = {'alpha': 0.8}, kde = False, label = 'A or B')
+sns.distplot(df_pi.loc[df_pi.grades_comp == 'C or lower'].pi_pro_hm_feats_comp, \
+             ax = ax1, color = 'dodgerblue', norm_hist = True, bins = 13, \
+             kde = False, hist_kws = {'alpha': 0.8}, label = 'C or lower')
+ax1.set_title('Relationship Between Student Grades and \nDistribution of Parental Involvement at Home')
+ax1.set_ylabel('Probability')
+ax1.set_xlabel("Composite index for parent's involvement at home\n(Higher values indicate more involvement)")
+plt.legend()
+plt.xticks(ticks = range(13, 27, 1), labels = range(13, 27, 1))
+# For type of parental involvement analysis, reduce dimensions of composite 
+# parental involvement indocators to two groups
+df_pi['schl_comp'] = 'Low'
+df_pi['hm_comp'] = 'Low'
+i1 = df_pi.loc[df_pi.pi_pro_schl_feats_comp > \
+               np.mean(df_pi.pi_pro_schl_feats_comp)].index
+df_pi.loc[i1, 'schl_comp'] = 'High'
+i2 = df_pi.loc[df_pi.pi_pro_hm_feats_comp > \
+               np.mean(df_pi.pi_pro_hm_feats_comp)].index
+df_pi.loc[i2, 'hm_comp'] = 'High'
+# Identify high school - low home involvement, and
+# low school - high home involvement groups
+i1 = df_pi.loc[(df_pi.schl_comp == 'High') & (df_pi.hm_comp == 'Low')].index
+i2 = df_pi.loc[(df_pi.schl_comp == 'Low') & (df_pi.hm_comp == 'High')].index
+df_pi.loc[i1, 'schl_hm_comp'] = 'More involved at school'
+df_pi.loc[i2, 'schl_hm_comp'] = 'More involved at home'
+# Plot of the contingency table for the type of parental involvement vs. 
+# student high-low performing students
+props = lambda key: {'color': 'dodgerblue' if 'More involved at home' in key else 'orange'}
+labelizer = lambda k: f"{(k == ('More involved at school', 'A or B'))*90 + (k == ('More involved at school', 'C or lower'))*10 + (k == ('More involved at home', 'A or B'))*84 + (k == ('More involved at home', 'C or lower'))*16}%"
+
+mosaic(df_pi[['schl_hm_comp', 'grades_comp']], index = ['schl_hm_comp', 'grades_comp'], \
+       title = 'Relationship Between Student Grades and \nType of Parental Involvement', \
+       properties = props, gap = 0.025, labelizer = labelizer)
+ax1.set_xticklabels(['More involved at school\nLess Involved at home', ''])
+plt.show()
+df_pi.to_csv('~/FIS-Projects/Module-3/FIS-Mod3-Project/data/df_pi.csv', sep = ',')
