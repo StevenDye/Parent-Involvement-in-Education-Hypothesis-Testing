@@ -13,6 +13,12 @@ import scipy.stats as stats
 import statsmodels.api as sm
 import itertools
 pi_df.describe().T
+# Reduce dimensions in grades to 2
+i1 = pi_df.loc[pi_df.SEGRADES <= 2].index
+i2 = pi_df.loc[pi_df.SEGRADES >= 3].index
+pi_df.loc[i1, 'grades_comp'] = 'A or B'
+pi_df.loc[i2, 'grades_comp'] = 'C or lower'
+
 # Reduce dimensions of composite parental involvement indocators to two groups
 pi_df['schl_comp'] = 'Low'
 pi_df['hm_comp'] = 'Low'
@@ -28,11 +34,6 @@ i1 = pi_df.loc[(pi_df.schl_comp == 'High') & (pi_df.hm_comp == 'Low')].index
 i2 = pi_df.loc[(pi_df.schl_comp == 'Low') & (pi_df.hm_comp == 'High')].index
 pi_df.loc[i1, 'schl_hm_comp'] = 'More involved at school'
 pi_df.loc[i2, 'schl_hm_comp'] = 'More involved at home'
-# Reduce dimensions in grades to 2
-i1 = pi_df.loc[pi_df.SEGRADES <= 2].index
-i2 = pi_df.loc[pi_df.SEGRADES >= 3].index
-pi_df.loc[i1, 'grades_comp'] = 'A or B'
-pi_df.loc[i2, 'grades_comp'] = 'C or lower'
 # Test if grade distribution is independent between two groups
 contingency_table = sm.stats.Table.from_data(pi_df[['schl_hm_comp', 'grades_comp']])    
 rslt = contingency_table.test_nominal_association()
