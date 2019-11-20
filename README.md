@@ -1,8 +1,12 @@
 # FIS-Mod3-Project
 This project focuses on hypothesis testing using the National Parent Involvement in Education Survey
+
 Date: November 2019
+
 Project Members: Anil Onal and Steven Dye
+
 Goals: Two come up with two hypotheses about the relationship between a child's success in school and the participation of their parents, and to test those Hypotheses.
+
 Responsibilities:
  - Define project scope and focus
  - Collect data
