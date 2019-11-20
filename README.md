@@ -19,8 +19,9 @@ Responsibilities:
  
 Summary of files:
  - Master_Notebook.ipynb: Jupyter Notebook documenting the code and the analysis for the project. Written for a technical audience
- - pfi_pu.csv: National Household Education Surveys Program of 2016 survey data from the National Center for Education Statistics.
- - pi_df.csv: Cleaned data set
+ - data file
+     - pfi_pu.csv: National Household Education Surveys Program of 2016 survey data from the National Center for Education Statistics.
+     - pi_df.csv: Cleaned data set
  - data_prep.py: Code used to clean data
  - visualizations.py: Code to produce visualizations
  - hypothesis_tests.py: Code to perform hypothesis testing.
