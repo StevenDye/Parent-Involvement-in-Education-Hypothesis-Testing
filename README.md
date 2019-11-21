@@ -24,5 +24,6 @@ Summary of files:
      - pi_df.csv: Cleaned data set
  - data_prep.py: Code used to clean data
  - visualizations.py: Code to produce visualizations
- - hypothesis_tests.py: Code to perform hypothesis testing.
+ - hypothesis_tests.py: Code to perform hypothesis testing
+ - Parental Involvement to Education.pdf: PDF of poweroint presentation
  - Powerpoint file: https://docs.google.com/presentation/d/1kjb50hbVqYYjk_NzyRe7SakGgzYTrXKrpP3ShqCcZQc/edit#slide=id.g6b57130686_0_0
