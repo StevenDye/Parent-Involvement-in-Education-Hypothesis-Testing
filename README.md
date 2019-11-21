@@ -5,7 +5,7 @@ Date: November 2019
 
 Project Members: Anil Onal and Steven Dye
 
-Goals: Two come up with two hypotheses about the relationship between a child's success in school and the participation of their parents, and to test those hypotheses with statistical tests.
+Goals: To come up with two hypotheses about the relationship between a child's success in school and the participation of their parents, and to test those hypotheses with relevant statistical techniques.
 
 Responsibilities:
  - Define project scope and focus
@@ -25,5 +25,5 @@ Summary of files:
  - data_prep.py: Code used to clean data
  - visualizations.py: Code to produce visualizations
  - hypothesis_tests.py: Code to perform hypothesis testing
- - Parental Involvement to Education.pdf: PDF of poweroint presentation
+ - Parental Involvement to Education.pdf: PDF of powerpoint presentation
  - Powerpoint file: https://docs.google.com/presentation/d/1kjb50hbVqYYjk_NzyRe7SakGgzYTrXKrpP3ShqCcZQc/edit#slide=id.g6b57130686_0_0
