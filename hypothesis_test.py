@@ -24,6 +24,7 @@ df_pi[['grades_comp', 'FSFREQ']].groupby('grades_comp').describe()
 # came from the same population
 high_students_pi = df_pi.loc[df_pi.grades_comp == 'A or B'].FSFREQ
 low_students_pi = df_pi.loc[df_pi.grades_comp == 'C or lower'].FSFREQ
+print("\nH0: Distribution of parent's hours spent at school is the same\nregardless of student grades\n")
 print(stats.mannwhitneyu(high_students_pi, low_students_pi,
                          use_continuity=False, alternative=None))
 # Use chi-2 test to find out if the distribution of each composite parental
@@ -33,42 +34,32 @@ print(stats.mannwhitneyu(high_students_pi, low_students_pi,
 # At-school involvement
 contingency_table = sm.stats.Table.from_data(df_pi[['grades_comp',
                                                     'pi_pro_schl_feats_comp']])
+
+print("\nContingency table for high - low grades vs. at-school involvement\n")
+print(contingency_table)
+print("\nH0: Distribution of at-school involvement is the same\nregardless of student grades\n")
 print(contingency_table.test_nominal_association())
+print("\nchi-2 contributions\n")
 print(contingency_table.chi2_contribs)
 # Same chi-2 test for at-home involvement
 contingency_table = sm.stats.Table.from_data(df_pi[['grades_comp',
                                                     'pi_pro_hm_feats_comp']])
+print("\nContingency table for high - low grades vs. at-home involvement\n")
+print(contingency_table)
+print("\nH0: Distribution of at-home involvement is the same\nregardless of student grades\n")
 print(contingency_table.test_nominal_association())
+print("\nchi-2 contributions\n")
 print(contingency_table.chi2_contribs)
 # Use chi-2 test to find out if the type of parental involvement is related
 # with the occurances of high and low performing students
 # H0: No relation.
 contingency_table = sm.stats.Table.from_data(df_pi[['schl_hm_comp', 'grades_comp']])
+print("\nContingency table for high - low grades vs. high at-home - high at-school involvement\n")
+print(contingency_table)
+print("\nH0: Distribution of grades is the same\nregardless of involvement type\n")
 print(contingency_table.test_nominal_association())
-# Test for relation of parental involvement features
-# This section is for future analysis
-pi_pro_schl_feats = ['FSSPORTX', 'FSVOL', 'FSMTNG',
-                     'FSPTMTNG', 'FSFUNDRS', 'FSCOMMTE']
-schl_feat_combins = list(itertools.combinations(pi_pro_schl_feats, 2))
-# Proactive at-school parental involvement features show dependence. However,
-# implications are less clear. Should we use one of them instead of all?
-for combin in schl_feat_combins:
-    contingency_table = sm.stats.Table.from_data(df_pi[[combin[0], combin[1]]])
-    print(contingency_table.test_ordinal_association().pvalue,
-          contingency_table.test_ordinal_association().pvalue > 0.05)
-    print(combin, contingency_table.chi2_contribs)
-pi_pro_hm_feats = ['FOSTORY2X', 'FOCRAFTS', 'FOGAMES', 'FOBUILDX',
-                   'FOSPORT', 'FOHISTX', 'FOLIBRAYX', 'FOBOOKSTX',
-                   'FOCONCRTX', 'FOMUSEUMX', 'FOZOOX', 'FOGROUPX',
-                   'FOSPRTEVX']
-hm_feat_combins = list(itertools.combinations(pi_pro_hm_feats, 2))
-# Proactive at-home parental involvement features also show dependence. However,
-# implications are less clear. Should we use one of them instead of all?
-for combin in hm_feat_combins:
-    contingency_table = sm.stats.Table.from_data(df_pi[[combin[0], combin[1]]])
-    print(contingency_table.test_ordinal_association().pvalue,
-          contingency_table.test_ordinal_association().pvalue > 0.05)
-    print(combin, contingency_table.chi2_contribs)
+print("\nchi-2 contributions\n")
+print(contingency_table.chi2_contribs)
 
 # Get means and standard deviations of the two student groups
 # Creates a sub-dataframe that removes N/A values
@@ -77,10 +68,6 @@ valid_grades_df = df_pi.copy()
 valid_grades_df['student_performance'] = valid_grades_df['SEGRADES'].apply(lambda x: np.floor(x/2.5))
 valid_grades_df[['student_performance',
                  'FSFREQ']].groupby('student_performance').describe()
-
-# Mann-Whitney U test
-print(stats.mannwhitneyu(high_students_pi, low_students_pi,
-                         use_continuity=False, alternative=None))
 
 # Calculate the Effect Size with Cohen's D
 # Expected differences in mean is 0.
@@ -97,7 +84,30 @@ s_W = np.sqrt(num/denom)
 
 d = np.abs(mean_1 - mean_2)/s_W
 
-
 # Calculate power
 power_analysis = TTestIndPower()
-power_analysis.solve_power(effect_size=d, nobs1=n_1, alpha=.05)
+power_analysis.solve_power(effect_size=d, nobs1=n_1, ratio = n_2/n_1, alpha=.05)
+
+# Test for relation of parental involvement features
+# This section is for future analysis
+pi_pro_schl_feats = ['FSSPORTX', 'FSVOL', 'FSMTNG',
+                     'FSPTMTNG', 'FSFUNDRS', 'FSCOMMTE']
+schl_feat_combins = list(itertools.combinations(pi_pro_schl_feats, 2))
+# Proactive at-school parental involvement features show dependence. However,
+# implications are less clear. Should we use one of them instead of all?
+print('\nThis section is the beginning of followup work\n')
+for combin in schl_feat_combins:
+    contingency_table = sm.stats.Table.from_data(df_pi[[combin[0], combin[1]]])
+    print(contingency_table.test_ordinal_association().pvalue,
+          contingency_table.test_ordinal_association().pvalue > 0.05)
+pi_pro_hm_feats = ['FOSTORY2X', 'FOCRAFTS', 'FOGAMES', 'FOBUILDX',
+                   'FOSPORT', 'FOHISTX', 'FOLIBRAYX', 'FOBOOKSTX',
+                   'FOCONCRTX', 'FOMUSEUMX', 'FOZOOX', 'FOGROUPX',
+                   'FOSPRTEVX']
+hm_feat_combins = list(itertools.combinations(pi_pro_hm_feats, 2))
+# Proactive at-home parental involvement features also show dependence. However,
+# implications are less clear. Should we use one of them instead of all?
+for combin in hm_feat_combins:
+    contingency_table = sm.stats.Table.from_data(df_pi[[combin[0], combin[1]]])
+    print(contingency_table.test_ordinal_association().pvalue,
+          contingency_table.test_ordinal_association().pvalue > 0.05)
